@@ -1,0 +1,783 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>인테리어·스타일링 상담 문의</title>
+<script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<style>
+  :root {
+    --page-bg: #f5f4f1;
+    --card-bg: #ffffff;
+    --text: #2b2825;
+    --text-dim: #8a8580;
+    --border: #e4e1db;
+    --accent: #a97c50;
+    --accent-hover: #8f6841;
+    --error: #c94f4f;
+    --radius: 14px;
+    --shadow: 0 1px 2px rgba(0,0,0,0.04), 0 12px 32px rgba(0,0,0,0.06);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--page-bg);
+    font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+    color: var(--text);
+    padding: 32px 16px 80px;
+  }
+
+  .wrap {
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  header.page-header {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+
+  header.page-header h1 {
+    font-size: 22px;
+    font-weight: 700;
+    margin: 0 0 8px;
+  }
+
+  header.page-header p {
+    font-size: 14px;
+    color: var(--text-dim);
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  form {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 28px 22px;
+  }
+
+  .field {
+    margin-bottom: 26px;
+  }
+
+  .field:last-of-type {
+    margin-bottom: 0;
+  }
+
+  .field-label {
+    display: block;
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .field-label .required {
+    color: var(--error);
+    margin-left: 2px;
+  }
+
+  .field-hint {
+    font-size: 12.5px;
+    color: var(--text-dim);
+    margin: 0 0 10px;
+    line-height: 1.5;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="number"],
+  input[type="date"],
+  textarea {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 16px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: #fbfaf8;
+    color: var(--text);
+    font-family: inherit;
+    transition: border-color .15s;
+  }
+
+  input:focus, textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: #fff;
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 90px;
+  }
+
+  .unit-input {
+    position: relative;
+  }
+
+  .unit-input input {
+    padding-right: 50px;
+  }
+
+  .unit-input .unit {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+    color: var(--text-dim);
+    pointer-events: none;
+  }
+
+  .choice-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .choice-group label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font-size: 14px;
+    cursor: pointer;
+    background: #fbfaf8;
+    transition: border-color .15s, background .15s;
+  }
+
+  .choice-group label:has(input:checked) {
+    border-color: var(--accent);
+    background: #f6ede3;
+    color: var(--accent-hover);
+    font-weight: 600;
+  }
+
+  .choice-group input {
+    accent-color: var(--accent);
+  }
+
+  .address-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .address-row input {
+    flex: 1;
+  }
+
+  .btn-secondary {
+    flex-shrink: 0;
+    padding: 0 16px;
+    border-radius: 10px;
+    border: 1px solid var(--accent);
+    background: #fff;
+    color: var(--accent);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .btn-secondary:hover {
+    background: #f6ede3;
+  }
+
+  .move-in-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .move-in-row input[type="date"] {
+    flex: 1;
+    min-width: 160px;
+  }
+
+  .checkbox-inline {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13.5px;
+    color: var(--text-dim);
+    white-space: nowrap;
+  }
+
+  .checkbox-inline input {
+    accent-color: var(--accent);
+  }
+
+  .conditional-block {
+    border-left: 3px solid var(--accent);
+    padding: 4px 0 4px 16px;
+    margin: -4px 0 26px;
+  }
+
+  .conditional-block[hidden] {
+    display: none;
+  }
+
+  .error-text {
+    display: none;
+    color: var(--error);
+    font-size: 12.5px;
+    margin-top: 6px;
+  }
+
+  .field.invalid input,
+  .field.invalid textarea {
+    border-color: var(--error);
+  }
+
+  .field.invalid .error-text {
+    display: block;
+  }
+
+  .consent-box {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    background: #fbfaf8;
+  }
+
+  .consent-box summary {
+    cursor: pointer;
+    font-size: 13.5px;
+    color: var(--accent-hover);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .consent-detail {
+    font-size: 12.5px;
+    color: var(--text-dim);
+    line-height: 1.7;
+    margin: 10px 0 0;
+    white-space: pre-line;
+  }
+
+  .consent-agree {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-top: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .consent-agree input {
+    margin-top: 3px;
+    accent-color: var(--accent);
+  }
+
+  button[type="submit"] {
+    width: 100%;
+    margin-top: 30px;
+    padding: 15px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    background: var(--accent);
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background .15s;
+  }
+
+  button[type="submit"]:hover {
+    background: var(--accent-hover);
+  }
+
+  button[type="submit"]:disabled {
+    background: #cabfb2;
+    cursor: not-allowed;
+  }
+
+  .submit-status {
+    text-align: center;
+    font-size: 14px;
+    margin-top: 14px;
+    min-height: 20px;
+  }
+
+  .submit-status.success { color: #2f7d4f; }
+  .submit-status.error { color: var(--error); }
+
+  .success-screen {
+    display: none;
+    text-align: center;
+    padding: 60px 24px;
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+
+  .success-screen h2 {
+    font-size: 20px;
+    margin: 0 0 10px;
+  }
+
+  .success-screen p {
+    color: var(--text-dim);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  @media (max-width: 480px) {
+    form { padding: 22px 16px; }
+    .choice-group label { flex: 1 1 auto; justify-content: center; }
+  }
+
+  .address-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(0,0,0,.5);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .address-modal[hidden] { display: none; }
+
+  .address-modal-inner {
+    width: 100%;
+    max-width: 480px;
+    height: 85vh;
+    max-height: 640px;
+    background: #fff;
+    border-radius: 16px 16px 0 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  @media (min-width: 560px) {
+    .address-modal { align-items: center; }
+    .address-modal-inner { height: 70vh; border-radius: 16px; }
+  }
+
+  .address-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .address-modal-header h3 {
+    margin: 0;
+    font-size: 15px;
+  }
+
+  .address-modal-close {
+    border: none;
+    background: none;
+    font-size: 20px;
+    line-height: 1;
+    color: var(--text-dim);
+    cursor: pointer;
+    padding: 4px 8px;
+  }
+
+  .address-modal-body {
+    flex: 1;
+    min-height: 0;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="page-header">
+    <h1>홈/상업공간 인테리어·스타일링 상담 문의</h1>
+    <p>아래 항목을 남겨주시면 담당자가 확인 후 순차적으로 연락드립니다.</p>
+  </header>
+
+  <form id="inquiry-form" novalidate>
+
+    <!-- 1. 서비스 -->
+    <div class="field" data-field="service">
+      <label class="field-label">1. 상담이 필요한 서비스는 무엇인가요?<span class="required">*</span></label>
+      <div class="choice-group" data-required-group="service">
+        <label><input type="radio" name="service" value="홈스타일링" required> 홈스타일링</label>
+        <label><input type="radio" name="service" value="홈인테리어 및 시공" required> 홈인테리어 및 시공</label>
+        <label><input type="radio" name="service" value="상업공간 스타일링" required> 상업공간 스타일링</label>
+        <label><input type="radio" name="service" value="상업공간 인테리어 및 시공" required> 상업공간 인테리어 및 시공</label>
+      </div>
+      <p class="error-text">서비스를 선택해주세요.</p>
+    </div>
+
+    <!-- 2. 성함 -->
+    <div class="field" data-field="name">
+      <label class="field-label" for="name">2. 성함을 기입해주세요<span class="required">*</span></label>
+      <input type="text" id="name" name="name" required>
+      <p class="error-text">성함을 입력해주세요.</p>
+    </div>
+
+    <!-- 3. 이메일 -->
+    <div class="field" data-field="email">
+      <label class="field-label" for="email">3. 메일주소를 기입해주세요<span class="required">*</span></label>
+      <input type="email" id="email" name="email" required>
+      <p class="error-text">올바른 메일주소를 입력해주세요.</p>
+    </div>
+
+    <!-- 4. 연락처 -->
+    <div class="field" data-field="phone">
+      <label class="field-label" for="phone">4. 연락상담 가능한 연락처를 기입해주세요<span class="required">*</span></label>
+      <input type="tel" id="phone" name="phone" placeholder="010-0000-0000" required>
+      <p class="error-text">올바른 연락처를 입력해주세요. (예: 010-0000-0000)</p>
+    </div>
+
+    <!-- 5. 주소 -->
+    <div class="field" data-field="address">
+      <label class="field-label">5. 의뢰한 공간 주소를 남겨주세요<span class="required">*</span></label>
+      <p class="field-hint">현장 정보를 남겨주셔야 상담을 더 자세히 도와드릴 수 있습니다.</p>
+      <div class="address-row">
+        <input type="text" id="zonecode" name="zonecode" placeholder="우편번호" readonly>
+        <button type="button" class="btn-secondary" id="btn-address-search">주소 검색</button>
+      </div>
+      <div class="address-row">
+        <input type="text" id="address-base" name="addressBase" placeholder="기본주소" readonly required>
+      </div>
+      <div class="address-row">
+        <input type="text" id="address-detail" name="addressDetail" placeholder="상세주소 (동/호수 등)">
+      </div>
+      <p class="error-text">주소 검색을 통해 주소를 입력해주세요.</p>
+    </div>
+
+    <!-- 6. 면적 -->
+    <div class="field" data-field="area">
+      <label class="field-label" for="area">6. 의뢰하시는 공간의 면적은 어떻게 되나요? (평수)<span class="required">*</span></label>
+      <div class="unit-input">
+        <input type="number" id="area" name="area" min="1" step="1" required>
+        <span class="unit">평</span>
+      </div>
+      <p class="error-text">면적을 숫자로 입력해주세요.</p>
+    </div>
+
+    <!-- 7. 구성원 -->
+    <div class="field" data-field="members">
+      <label class="field-label" for="members">7. 의뢰하시는 공간을 사용하는 구성원이 어떻게 되나요?<span class="required">*</span></label>
+      <div class="unit-input">
+        <input type="number" id="members" name="members" min="1" step="1" required>
+        <span class="unit">명</span>
+      </div>
+      <p class="error-text">구성원 수를 숫자로 입력해주세요.</p>
+    </div>
+
+    <!-- 8. 입주/오픈 예정일 -->
+    <div class="field" data-field="moveInDate">
+      <label class="field-label" for="moveInDate">8. 입주/오픈 예정일이 어떻게 되시나요?<span class="required">*</span></label>
+      <div class="move-in-row">
+        <input type="date" id="moveInDate" name="moveInDate" required>
+        <label class="checkbox-inline"><input type="checkbox" id="moveInNow" name="moveInNow"> 현재 입주중</label>
+      </div>
+      <p class="error-text">입주/오픈 예정일을 선택하거나 "현재 입주중"을 체크해주세요.</p>
+    </div>
+
+    <!-- 9. 예산 -->
+    <div class="field" data-field="budget">
+      <label class="field-label" for="budget">9. 고려하시고 계신 예산이 어떻게 되시나요?<span class="required">*</span></label>
+      <div class="unit-input">
+        <input type="number" id="budget" name="budget" min="0" step="1" required>
+        <span class="unit">만원</span>
+      </div>
+      <p class="error-text">예산을 숫자로 입력해주세요.</p>
+    </div>
+
+    <!-- 조건부: 10, 10-1 (홈인테리어 및 시공 / 상업공간 인테리어 및 시공 선택 시에만 노출) -->
+    <div class="conditional-block" id="construction-block" hidden>
+      <div class="field" data-field="constructionStart">
+        <label class="field-label" for="constructionStart">10. 공사는 언제부터 시작 가능한가요?<span class="required">*</span></label>
+        <input type="date" id="constructionStart" name="constructionStart">
+        <p class="error-text">공사 시작 가능일을 선택해주세요.</p>
+      </div>
+
+      <div class="field" data-field="constructionParts">
+        <label class="field-label">10-1. 시공이 필요한 부분을 체크해주세요</label>
+        <div class="choice-group">
+          <label><input type="checkbox" name="constructionParts" value="도배"> 도배</label>
+          <label><input type="checkbox" name="constructionParts" value="바닥"> 바닥</label>
+          <label><input type="checkbox" name="constructionParts" value="전기,조명"> 전기,조명</label>
+          <label><input type="checkbox" name="constructionParts" value="목공"> 목공</label>
+          <label><input type="checkbox" name="constructionParts" value="타일"> 타일</label>
+          <label><input type="checkbox" name="constructionParts" value="제작가구"> 제작가구</label>
+          <label><input type="checkbox" name="constructionParts" value="필름"> 필름</label>
+          <label><input type="checkbox" name="constructionParts" value="욕실"> 욕실</label>
+          <label><input type="checkbox" name="constructionParts" value="기타(페인트,발코니 확장, 창호, 중문 등)"> 기타(페인트,발코니 확장, 창호, 중문 등)</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- 11. 공간 묘사 -->
+    <div class="field" data-field="description">
+      <label class="field-label" for="description">11. 원하는 공간의 모습을 편하게 묘사해주세요</label>
+      <textarea id="description" name="description"></textarea>
+    </div>
+
+    <!-- 12. 유입 경로 -->
+    <div class="field" data-field="referral">
+      <label class="field-label">12. 알게된 경로를 말씀해주세요<span class="required">*</span></label>
+      <div class="choice-group" data-required-group="referral">
+        <label><input type="radio" name="referral" value="인스타그램" required> 인스타그램</label>
+        <label><input type="radio" name="referral" value="네이버" required> 네이버</label>
+        <label><input type="radio" name="referral" value="블로그" required> 블로그</label>
+        <label><input type="radio" name="referral" value="지인소개" required> 지인소개</label>
+        <label><input type="radio" name="referral" value="광고" required> 광고</label>
+      </div>
+      <p class="error-text">알게된 경로를 선택해주세요.</p>
+    </div>
+
+    <!-- 13. 통화 가능 시간대 -->
+    <div class="field" data-field="callTime">
+      <label class="field-label" for="callTime">13. 통화 가능한 시간대를 알려주세요<span class="required">*</span></label>
+      <input type="text" id="callTime" name="callTime" placeholder="예: 평일 오후 2시~6시" required>
+      <p class="error-text">통화 가능한 시간대를 입력해주세요.</p>
+    </div>
+
+    <!-- 개인정보 수집 동의 -->
+    <div class="field" data-field="consent">
+      <label class="field-label">개인정보 수집·이용 동의<span class="required">*</span></label>
+      <div class="consent-box">
+        <details>
+          <summary>개인정보 수집 및 이용에 관한 안내 전문 보기</summary>
+          <p class="consent-detail">1. 수집 항목: 성함, 이메일 주소, 연락처, 의뢰 공간 주소, 상담 내용(면적, 구성원 수, 입주/오픈 예정일, 예산, 공사 관련 정보, 공간 묘사 등)
+2. 수집 목적: 인테리어·스타일링 상담 신청 접수 및 상담·견적 안내, 계약 이행을 위한 연락
+3. 보유 및 이용 기간: 수집일로부터 상담 종료 후 1년까지 보관하며, 이후 지체 없이 파기합니다. (단, 관계 법령에 따라 보존이 필요한 경우 해당 기간 동안 보관)
+4. 동의를 거부할 권리 및 불이익: 귀하는 개인정보 수집·이용에 동의하지 않을 권리가 있습니다. 다만 동의하지 않으실 경우 상담 신청 및 진행이 제한될 수 있습니다.</p>
+        </details>
+        <label class="consent-agree">
+          <input type="checkbox" id="consent" name="consent" required>
+          위 개인정보 수집 및 이용에 동의합니다. (필수)
+        </label>
+      </div>
+      <p class="error-text">개인정보 수집·이용에 동의해주세요.</p>
+    </div>
+
+    <button type="submit" id="submit-btn">문의 남기기</button>
+    <p class="submit-status" id="submit-status" role="status" aria-live="polite"></p>
+  </form>
+
+  <div class="address-modal" id="address-modal" hidden>
+    <div class="address-modal-inner">
+      <div class="address-modal-header">
+        <h3>주소 검색</h3>
+        <button type="button" class="address-modal-close" id="address-modal-close" aria-label="닫기">×</button>
+      </div>
+      <div class="address-modal-body" id="address-modal-body"></div>
+    </div>
+  </div>
+
+  <div class="success-screen" id="success-screen">
+    <h2>문의가 접수되었습니다</h2>
+    <p>남겨주신 연락처로 담당자가 순차적으로 연락드리겠습니다.<br>감사합니다.</p>
+  </div>
+</div>
+
+<script>
+(function () {
+  // TODO: Google Apps Script 웹앱 배포 후 발급되는 URL로 교체하세요.
+  // 배포 방법은 google-apps-script/README.md 참고
+  var SCRIPT_URL = 'https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec';
+
+  var form = document.getElementById('inquiry-form');
+  var successScreen = document.getElementById('success-screen');
+  var submitBtn = document.getElementById('submit-btn');
+  var submitStatus = document.getElementById('submit-status');
+
+  var CONSTRUCTION_TRIGGER_SERVICES = ['홈인테리어 및 시공', '상업공간 인테리어 및 시공'];
+  var constructionBlock = document.getElementById('construction-block');
+  var constructionStartInput = document.getElementById('constructionStart');
+
+  function updateConstructionVisibility() {
+    var checked = form.querySelector('input[name="service"]:checked');
+    var show = checked && CONSTRUCTION_TRIGGER_SERVICES.indexOf(checked.value) !== -1;
+    constructionBlock.hidden = !show;
+    constructionStartInput.required = show;
+    if (!show) {
+      constructionStartInput.value = '';
+      form.querySelectorAll('input[name="constructionParts"]').forEach(function (cb) { cb.checked = false; });
+      clearFieldError('constructionStart');
+    }
+  }
+
+  form.querySelectorAll('input[name="service"]').forEach(function (radio) {
+    radio.addEventListener('change', updateConstructionVisibility);
+  });
+
+  // 5. 주소 검색 (Daum 우편번호 서비스)
+  // 모바일 브라우저에서는 팝업(window.open) 방식이 결과 콜백을 못 받고 막히는 경우가 많아,
+  // 데스크톱/모바일 공통으로 페이지 내 레이어(임베드) 모달을 사용한다.
+  var addressModal = document.getElementById('address-modal');
+  var addressModalBody = document.getElementById('address-modal-body');
+
+  function openAddressModal() {
+    addressModalBody.innerHTML = '';
+    new daum.Postcode({
+      oncomplete: function (data) {
+        document.getElementById('zonecode').value = data.zonecode;
+        document.getElementById('address-base').value = data.roadAddress || data.jibunAddress;
+        clearFieldError('address');
+        closeAddressModal();
+        document.getElementById('address-detail').focus();
+      },
+      width: '100%',
+      height: '100%'
+    }).embed(addressModalBody);
+    addressModal.hidden = false;
+  }
+
+  function closeAddressModal() {
+    addressModal.hidden = true;
+    addressModalBody.innerHTML = '';
+  }
+
+  document.getElementById('btn-address-search').addEventListener('click', openAddressModal);
+  document.getElementById('address-modal-close').addEventListener('click', closeAddressModal);
+  addressModal.addEventListener('click', function (e) {
+    if (e.target === addressModal) closeAddressModal();
+  });
+
+  // 8. 현재 입주중 체크 시 날짜 비활성화
+  var moveInDate = document.getElementById('moveInDate');
+  var moveInNow = document.getElementById('moveInNow');
+  moveInNow.addEventListener('change', function () {
+    if (moveInNow.checked) {
+      moveInDate.value = '';
+      moveInDate.disabled = true;
+      moveInDate.required = false;
+    } else {
+      moveInDate.disabled = false;
+      moveInDate.required = true;
+    }
+    clearFieldError('moveInDate');
+  });
+
+  function setFieldError(name, hasError) {
+    var field = form.querySelector('[data-field="' + name + '"]');
+    if (!field) return;
+    field.classList.toggle('invalid', hasError);
+  }
+
+  function clearFieldError(name) {
+    setFieldError(name, false);
+  }
+
+  var PHONE_RE = /^0\d{1,2}-?\d{3,4}-?\d{4}$/;
+  var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  function validate() {
+    var valid = true;
+
+    function check(name, ok) {
+      setFieldError(name, !ok);
+      if (!ok) valid = false;
+    }
+
+    check('service', !!form.querySelector('input[name="service"]:checked'));
+    check('name', document.getElementById('name').value.trim().length > 0);
+    check('email', EMAIL_RE.test(document.getElementById('email').value.trim()));
+    check('phone', PHONE_RE.test(document.getElementById('phone').value.trim()));
+    check('address', document.getElementById('address-base').value.trim().length > 0);
+    check('area', document.getElementById('area').value !== '' && Number(document.getElementById('area').value) > 0);
+    check('members', document.getElementById('members').value !== '' && Number(document.getElementById('members').value) > 0);
+    check('moveInDate', moveInNow.checked || moveInDate.value !== '');
+    check('budget', document.getElementById('budget').value !== '' && Number(document.getElementById('budget').value) >= 0);
+
+    if (!constructionBlock.hidden) {
+      check('constructionStart', constructionStartInput.value !== '');
+    }
+
+    check('referral', !!form.querySelector('input[name="referral"]:checked'));
+    check('callTime', document.getElementById('callTime').value.trim().length > 0);
+    check('consent', document.getElementById('consent').checked);
+
+    return valid;
+  }
+
+  function collectPayload() {
+    var service = form.querySelector('input[name="service"]:checked');
+    var referral = form.querySelector('input[name="referral"]:checked');
+    var parts = Array.prototype.map.call(
+      form.querySelectorAll('input[name="constructionParts"]:checked'),
+      function (cb) { return cb.value; }
+    );
+
+    return {
+      submittedAt: new Date().toISOString(),
+      service: service ? service.value : '',
+      name: document.getElementById('name').value.trim(),
+      email: document.getElementById('email').value.trim(),
+      phone: document.getElementById('phone').value.trim(),
+      zonecode: document.getElementById('zonecode').value,
+      addressBase: document.getElementById('address-base').value,
+      addressDetail: document.getElementById('address-detail').value.trim(),
+      area: document.getElementById('area').value,
+      members: document.getElementById('members').value,
+      moveInDate: moveInNow.checked ? '현재 입주중' : moveInDate.value,
+      budget: document.getElementById('budget').value,
+      constructionStart: constructionBlock.hidden ? '' : constructionStartInput.value,
+      constructionParts: parts.join(', '),
+      description: document.getElementById('description').value.trim(),
+      referral: referral ? referral.value : '',
+      callTime: document.getElementById('callTime').value.trim(),
+      consent: document.getElementById('consent').checked ? 'Y' : 'N'
+    };
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    submitStatus.textContent = '';
+    submitStatus.className = 'submit-status';
+
+    if (!validate()) {
+      var firstInvalid = form.querySelector('.field.invalid');
+      if (firstInvalid) firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      submitStatus.textContent = '입력하지 않은 필수 항목이 있습니다. 표시된 항목을 확인해주세요.';
+      submitStatus.className = 'submit-status error';
+      return;
+    }
+
+    if (SCRIPT_URL.indexOf('YOUR_DEPLOYMENT_ID') !== -1) {
+      submitStatus.textContent = 'Google Apps Script 배포 URL이 아직 설정되지 않았습니다. (관리자 확인 필요)';
+      submitStatus.className = 'submit-status error';
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitStatus.textContent = '접수 중입니다...';
+
+    var payload = collectPayload();
+
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    })
+      .then(function () {
+        form.style.display = 'none';
+        successScreen.style.display = 'block';
+        successScreen.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      })
+      .catch(function () {
+        submitBtn.disabled = false;
+        submitStatus.textContent = '접수 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
+        submitStatus.className = 'submit-status error';
+      });
+  });
+})();
+</script>
+</body>
+</html>
