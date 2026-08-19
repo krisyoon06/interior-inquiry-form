@@ -450,9 +450,6 @@
       <div class="address-row">
         <input type="text" id="address-base" name="addressBase" placeholder="기본주소" readonly required>
       </div>
-      <div class="address-row">
-        <input type="text" id="address-detail" name="addressDetail" placeholder="상세주소 (동/호수 등)">
-      </div>
       <p class="error-text">주소 검색을 통해 주소를 입력해주세요.</p>
     </div>
 
@@ -630,7 +627,6 @@
         document.getElementById('address-base').value = data.roadAddress || data.jibunAddress;
         clearFieldError('address');
         closeAddressModal();
-        document.getElementById('address-detail').focus();
       },
       width: '100%',
       height: '100%'
@@ -639,8 +635,11 @@
   }
 
   function closeAddressModal() {
+    // 카카오/다음 우편번호 라이브러리가 oncomplete 직후 자체적으로 iframe 레이어를
+    // 정리(removeChild)하는데, 여기서 즉시 innerHTML을 비우면 그 정리 로직과
+    // 충돌해 "removeChild" 에러가 난다. 다음 openAddressModal() 호출 시점에
+    // 비우는 것으로 충분하므로 여기서는 모달만 숨긴다.
     addressModal.hidden = true;
-    addressModalBody.innerHTML = '';
   }
 
   document.getElementById('btn-address-search').addEventListener('click', openAddressModal);
@@ -722,7 +721,6 @@
       phone: document.getElementById('phone').value.trim(),
       zonecode: document.getElementById('zonecode').value,
       addressBase: document.getElementById('address-base').value,
-      addressDetail: document.getElementById('address-detail').value.trim(),
       area: document.getElementById('area').value,
       members: document.getElementById('members').value,
       moveInDate: moveInNow.checked ? '현재 입주중' : moveInDate.value,
