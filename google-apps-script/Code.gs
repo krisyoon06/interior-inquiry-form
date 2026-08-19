@@ -3,7 +3,7 @@ var SHEET_NAME = '문의내역';
 
 var HEADERS = [
   '접수일시', '상담서비스', '성함', '이메일', '연락처',
-  '우편번호', '기본주소',
+  '우편번호', '기본주소', '상세주소',
   '면적(평)', '구성원수', '입주/오픈예정일', '예산(만원)',
   '공사시작가능일', '시공필요부분', '공간묘사',
   '유입경로', '통화가능시간대', '개인정보동의'
@@ -16,7 +16,7 @@ function doPost(e) {
   var row = [
     formatTimestamp_(data.submittedAt),
     data.service, data.name, data.email, data.phone,
-    data.zonecode, data.addressBase,
+    data.zonecode, data.addressBase, data.addressDetail,
     data.area, data.members, data.moveInDate, data.budget,
     data.constructionStart, data.constructionParts, data.description,
     data.referral, data.callTime, data.consent

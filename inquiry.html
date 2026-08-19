@@ -312,26 +312,6 @@
   .submit-status.success { color: #2f7d4f; }
   .submit-status.error { color: var(--error); }
 
-  .success-screen {
-    display: none;
-    text-align: center;
-    padding: 60px 24px;
-    background: var(--card-bg);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-  }
-
-  .success-screen h2 {
-    font-size: 20px;
-    margin: 0 0 10px;
-  }
-
-  .success-screen p {
-    color: var(--text-dim);
-    font-size: 14px;
-    line-height: 1.6;
-  }
-
   @media (max-width: 480px) {
     form { padding: 22px 16px; }
     .choice-group label { flex: 1 1 auto; justify-content: center; }
@@ -435,20 +415,23 @@
     <!-- 4. 연락처 -->
     <div class="field" data-field="phone">
       <label class="field-label" for="phone">4. 연락상담 가능한 연락처를 기입해주세요<span class="required">*</span></label>
-      <input type="tel" id="phone" name="phone" placeholder="010-0000-0000" required>
-      <p class="error-text">올바른 연락처를 입력해주세요. (예: 010-0000-0000)</p>
+      <input type="tel" id="phone" name="phone" placeholder="예: 010-1234-5678" required>
+      <p class="error-text">연락처를 입력해주세요.</p>
     </div>
 
     <!-- 5. 주소 -->
     <div class="field" data-field="address">
       <label class="field-label">5. 의뢰한 공간 주소를 남겨주세요<span class="required">*</span></label>
-      <p class="field-hint">현장 정보를 남겨주셔야 상담을 더 자세히 도와드릴 수 있습니다.</p>
+      <p class="field-hint">추가 주소 (아파트명, 상호명) 까지 적어주시면 빠르고 상세한 상담이 가능합니다.</p>
       <div class="address-row">
         <input type="text" id="zonecode" name="zonecode" placeholder="우편번호" readonly>
         <button type="button" class="btn-secondary" id="btn-address-search">주소 검색</button>
       </div>
       <div class="address-row">
         <input type="text" id="address-base" name="addressBase" placeholder="기본주소" readonly required>
+      </div>
+      <div class="address-row">
+        <input type="text" id="address-detail" name="addressDetail" placeholder="아파트/가게 이름을 남겨주세요">
       </div>
       <p class="error-text">주소 검색을 통해 주소를 입력해주세요.</p>
     </div>
@@ -465,9 +448,9 @@
 
     <!-- 7. 구성원 -->
     <div class="field" data-field="members">
-      <label class="field-label" for="members">7. 의뢰하시는 공간을 사용하는 구성원이 어떻게 되나요?<span class="required">*</span></label>
+      <label class="field-label" for="members">7. 의뢰하시는 공간을 사용하는 구성원이 어떻게 되나요?</label>
       <div class="unit-input">
-        <input type="number" id="members" name="members" min="1" step="1" required>
+        <input type="number" id="members" name="members" min="1" step="1">
         <span class="unit">명</span>
       </div>
       <p class="error-text">구성원 수를 숫자로 입력해주세요.</p>
@@ -485,7 +468,8 @@
 
     <!-- 9. 예산 -->
     <div class="field" data-field="budget">
-      <label class="field-label" for="budget">9. 고려하시고 계신 예산이 어떻게 되시나요?<span class="required">*</span></label>
+      <label class="field-label" for="budget">9. 고려하시는 예산은 어느정도 이신가요?<span class="required">*</span></label>
+      <p class="field-hint">스타일링의 경우, 가구, 소품 구매 비용 등을 말씀해주세요</p>
       <div class="unit-input">
         <input type="number" id="budget" name="budget" min="0" step="1" required>
         <span class="unit">만원</span>
@@ -517,18 +501,18 @@
       </div>
     </div>
 
-    <!-- 11. 공간 묘사 -->
+    <!-- 11. 공간 묘사 (10, 10-1 노출 여부에 따라 번호가 10으로 당겨질 수 있음) -->
     <div class="field" data-field="description">
-      <label class="field-label" for="description">11. 원하는 공간의 모습을 편하게 묘사해주세요</label>
+      <label class="field-label" for="description"><span class="q-num" id="q-num-description">11.</span> 원하는 공간의 모습을 편하게 묘사해주세요</label>
       <textarea id="description" name="description"></textarea>
     </div>
 
     <!-- 12. 유입 경로 -->
     <div class="field" data-field="referral">
-      <label class="field-label">12. 알게된 경로를 말씀해주세요<span class="required">*</span></label>
+      <label class="field-label"><span class="q-num" id="q-num-referral">12.</span> 알게된 경로를 말씀해주세요<span class="required">*</span></label>
       <div class="choice-group" data-required-group="referral">
         <label><input type="radio" name="referral" value="인스타그램" required> 인스타그램</label>
-        <label><input type="radio" name="referral" value="네이버" required> 네이버</label>
+        <label><input type="radio" name="referral" value="네이버 검색" required> 네이버 검색</label>
         <label><input type="radio" name="referral" value="블로그" required> 블로그</label>
         <label><input type="radio" name="referral" value="지인소개" required> 지인소개</label>
         <label><input type="radio" name="referral" value="광고" required> 광고</label>
@@ -538,7 +522,7 @@
 
     <!-- 13. 통화 가능 시간대 -->
     <div class="field" data-field="callTime">
-      <label class="field-label" for="callTime">13. 통화 가능한 시간대를 알려주세요<span class="required">*</span></label>
+      <label class="field-label" for="callTime"><span class="q-num" id="q-num-callTime">13.</span> 통화 가능한 시간대를 알려주세요<span class="required">*</span></label>
       <input type="text" id="callTime" name="callTime" placeholder="예: 평일 오후 2시~6시" required>
       <p class="error-text">통화 가능한 시간대를 입력해주세요.</p>
     </div>
@@ -576,10 +560,6 @@
     </div>
   </div>
 
-  <div class="success-screen" id="success-screen">
-    <h2>문의가 접수되었습니다</h2>
-    <p>남겨주신 연락처로 담당자가 순차적으로 연락드리겠습니다.<br>감사합니다.</p>
-  </div>
 </div>
 
 <script>
@@ -589,13 +569,25 @@
   var SCRIPT_URL = 'https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec';
 
   var form = document.getElementById('inquiry-form');
-  var successScreen = document.getElementById('success-screen');
   var submitBtn = document.getElementById('submit-btn');
   var submitStatus = document.getElementById('submit-status');
 
   var CONSTRUCTION_TRIGGER_SERVICES = ['홈인테리어 및 시공', '상업공간 인테리어 및 시공'];
   var constructionBlock = document.getElementById('construction-block');
   var constructionStartInput = document.getElementById('constructionStart');
+
+  // 10, 10-1번이 숨겨졌을 때 이후 문항 번호가 "9 -> 11"로 건너뛰어 보이지 않도록,
+  // 11~13번 문항 번호를 노출 상태에 맞춰 10~12로 당겨서 다시 매긴다.
+  var qNumDescription = document.getElementById('q-num-description');
+  var qNumReferral = document.getElementById('q-num-referral');
+  var qNumCallTime = document.getElementById('q-num-callTime');
+
+  function updateQuestionNumbers() {
+    var base = constructionBlock.hidden ? 10 : 11;
+    qNumDescription.textContent = base + '.';
+    qNumReferral.textContent = (base + 1) + '.';
+    qNumCallTime.textContent = (base + 2) + '.';
+  }
 
   function updateConstructionVisibility() {
     var checked = form.querySelector('input[name="service"]:checked');
@@ -607,7 +599,10 @@
       form.querySelectorAll('input[name="constructionParts"]').forEach(function (cb) { cb.checked = false; });
       clearFieldError('constructionStart');
     }
+    updateQuestionNumbers();
   }
+
+  updateQuestionNumbers();
 
   form.querySelectorAll('input[name="service"]').forEach(function (radio) {
     radio.addEventListener('change', updateConstructionVisibility);
@@ -627,6 +622,7 @@
         document.getElementById('address-base').value = data.roadAddress || data.jibunAddress;
         clearFieldError('address');
         closeAddressModal();
+        document.getElementById('address-detail').focus();
       },
       width: '100%',
       height: '100%'
@@ -673,7 +669,6 @@
     setFieldError(name, false);
   }
 
-  var PHONE_RE = /^0\d{1,2}-?\d{3,4}-?\d{4}$/;
   var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   function validate() {
@@ -687,10 +682,10 @@
     check('service', !!form.querySelector('input[name="service"]:checked'));
     check('name', document.getElementById('name').value.trim().length > 0);
     check('email', EMAIL_RE.test(document.getElementById('email').value.trim()));
-    check('phone', PHONE_RE.test(document.getElementById('phone').value.trim()));
+    check('phone', document.getElementById('phone').value.replace(/\D/g, '').length >= 7);
     check('address', document.getElementById('address-base').value.trim().length > 0);
     check('area', document.getElementById('area').value !== '' && Number(document.getElementById('area').value) > 0);
-    check('members', document.getElementById('members').value !== '' && Number(document.getElementById('members').value) > 0);
+    check('members', document.getElementById('members').value === '' || Number(document.getElementById('members').value) > 0);
     check('moveInDate', moveInNow.checked || moveInDate.value !== '');
     check('budget', document.getElementById('budget').value !== '' && Number(document.getElementById('budget').value) >= 0);
 
@@ -721,6 +716,7 @@
       phone: document.getElementById('phone').value.trim(),
       zonecode: document.getElementById('zonecode').value,
       addressBase: document.getElementById('address-base').value,
+      addressDetail: document.getElementById('address-detail').value.trim(),
       area: document.getElementById('area').value,
       members: document.getElementById('members').value,
       moveInDate: moveInNow.checked ? '현재 입주중' : moveInDate.value,
@@ -765,9 +761,7 @@
       body: JSON.stringify(payload)
     })
       .then(function () {
-        form.style.display = 'none';
-        successScreen.style.display = 'block';
-        successScreen.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        window.location.href = 'thankyou.html';
       })
       .catch(function () {
         submitBtn.disabled = false;
