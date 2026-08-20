@@ -12,10 +12,18 @@
 - 9번(예산): 문항 문구에 "스타일링의 경우 가구·소품 구매 비용" 힌트 추가
 - 12번 "네이버" → "네이버 검색"으로 명칭 변경
 
+## 배포 현황 (2026-08-20 기준)
+
+- **저장소**: public (원래 private였으나 GitHub Pages 무료 호스팅을 위해 전환. 전환 전 `git-filter-repo`로 PDF를 커밋 히스토리에서 완전히 제거한 뒤 force-push함)
+- **GitHub Pages**: https://krisyoon06.github.io/interior-inquiry-form/ (루트 접속 시 `index.html`이 `inquiry.html`로 즉시 이동)
+- **Apps Script 웹앱**: 실제 배포 완료, `inquiry.html`의 `SCRIPT_URL`에 실 URL 반영됨. curl로 10건 테스트 제출 → Google Sheets에 정상 저장 확인 완료(우편번호/연락처 앞자리 0 보존, 허니팟·3초 미만 제출 차단 정상 작동까지 확인). **다만 시트에 이때 만든 `[테스트]` 접두 더미 데이터가 남아있으므로 정리 필요** (아래 TODO 참고)
+
 ## 구성 파일
 
 - `inquiry.html` — 문의 폼 페이지 (제출 시 Google Apps Script로 POST)
-- `thankyou.html` — 제출 성공 후 리다이렉트되는 완료 안내 페이지
+- `thankyou.html` — 제출 성공 후 리다이렉트되는 완료 안내 페이지. 제목은 "감사합니다. / 문의가 접수되었어요." 2줄 구성(`<br>`). 하단 버튼은 원래 "문의 폼으로 돌아가기" 링크였으나, "접수 이후 단계 알아보기"라는 별도 안내 페이지를 만들 예정이라 텍스트만 바꾸고 링크는 임시로 해제(`<span>`)해둔 상태 — 해당 페이지 완성되면 다시 `<a href="...">`로 교체할 것(코드에 TODO 주석 있음)
+- `index.html` — GitHub Pages 루트 접속 시 `inquiry.html`로 리다이렉트하는 용도
+- `.nojekyll` — GitHub Pages가 Jekyll로 처리하지 않고 정적 파일 그대로 서빙하도록 하는 빈 파일
 - `google-apps-script/Code.gs` — 제출 데이터를 Google Sheets에 append하는 웹훅 스크립트
 - `google-apps-script/README.md` — Sheets + Apps Script 배포 절차
 - `SNS 마케팅관리_new.pdf` — 원본 요건 명세. 내부 기획 문서라 저장소 public 전환 시 제거함. 로컬 `~/Documents/interior-inquiry-form-private/`에 보관 중.
@@ -28,6 +36,7 @@
 - `google-apps-script/Code.gs`는 Google Sheets 포뮬러 인젝션(셀 값이 `=,+,-,@`로 시작하면 수식으로 해석되는 문제) 방어 로직(`sanitizeForSheet_`)을 포함함. 새 필드를 추가할 때도 이 sanitize를 거치도록 유지할 것.
 - 개인정보 수집·이용 동의 문구의 보유기간(초안: 상담 종료 후 1년)은 placeholder이므로 실제 운영 정책에 맞게 조정 필요.
 - iOS Safari 자동 확대 방지를 위해 모든 입력 필드 폰트는 16px 이상 유지.
+- 모든 HTML 페이지(`inquiry.html`, `thankyou.html`, `index.html`) 하단에 `© 2026 LLL SPACE. All rights reserved.` 카피라이트 문구 있음(`.site-footer` 클래스).
 
 ## 보안 (2026-08-20 점검)
 
@@ -44,11 +53,12 @@
 - 프론트엔드(`inquiry.html`, `thankyou.html`) 쪽엔 `innerHTML` 등 DOM XSS 벡터 없음(사용자 입력이 어디에도 다시 렌더링되지 않음).
 - **연락처/우편번호 앞자리 0 소실**: 순수 숫자로만 이루어진 값(대시 없는 전화번호, 서울 우편번호 "03150" 등)을 `appendRow`로 그대로 쓰면 구글 시트가 자동으로 숫자로 인식해 앞자리 0을 지워버림 → `FORCE_TEXT_FIELDS = ['phone', 'zonecode']`에 대해 내용과 무관하게 항상 어퍼스트로피를 붙여 텍스트로 강제 저장(`forceText_()`). **이 수정 이전에 저장된 기존 행은 소급 반영 안 되므로, 필요시 시트에서 수동으로 앞자리 0을 복원해야 함.**
 
-**⚠️ 중요**: 위 `Code.gs` 변경사항은 저장소 파일에만 반영되어 있고, **실제 배포된 Apps Script 웹앱에는 아직 반영 안 됨**. 사장님 Google Sheets의 Apps Script 편집기에서 `Code.gs` 최신 내용으로 교체 후 `배포 > 배포 관리 > 새 버전`으로 재배포해야 실제로 적용됨.
+위 `Code.gs` 보안 개선사항은 재배포 완료되어 실제 배포본에도 반영됨(curl로 재검증 완료).
 
 ## 남은 작업 (TODO)
 
-- [ ] 위 `Code.gs` 보안 개선사항을 실제 배포본에 반영(재배포)
+- [ ] Google Sheets에 남아있는 `[테스트]`/`[테스트-차단되어야함]` 접두 더미 행 정리(수동 삭제)
+- [ ] "접수 이후 단계 알아보기" 안내 페이지 제작 후 `thankyou.html`의 `<span class="btn-home">`을 `<a href="...">`로 교체
 - [ ] reCAPTCHA 등 본격적인 봇 차단 도입 여부 판단(사이트키 발급 필요)
 
 ## 로컬 실행/테스트
