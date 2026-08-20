@@ -61,6 +61,14 @@
     line-height: 1.6;
   }
 
+  .hp-field {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
   form {
     background: var(--card-bg);
     border-radius: var(--radius);
@@ -395,6 +403,13 @@
 
   <form id="inquiry-form" novalidate>
 
+    <!-- 허니팟: 실제 사용자에게는 보이지 않는 필드. 자동입력 봇 차단용이므로
+         비워둔 채로 제출되어야 정상. CSS로 숨김 + 스크린리더도 건너뛰도록 처리. -->
+    <div class="hp-field" aria-hidden="true">
+      <label for="website">웹사이트</label>
+      <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+    </div>
+
     <!-- 1. 서비스 -->
     <div class="field" data-field="service">
       <label class="field-label">1. 상담이 필요한 서비스는 무엇인가요?<span class="required">*</span></label>
@@ -410,21 +425,21 @@
     <!-- 2. 성함 -->
     <div class="field" data-field="name">
       <label class="field-label" for="name">2. 성함을 기입해주세요<span class="required">*</span></label>
-      <input type="text" id="name" name="name" required>
+      <input type="text" id="name" name="name" maxlength="50" required>
       <p class="error-text">성함을 입력해주세요.</p>
     </div>
 
     <!-- 3. 이메일 -->
     <div class="field" data-field="email">
       <label class="field-label" for="email">3. 메일주소를 기입해주세요<span class="required">*</span></label>
-      <input type="email" id="email" name="email" required>
+      <input type="email" id="email" name="email" maxlength="100" required>
       <p class="error-text">올바른 메일주소를 입력해주세요.</p>
     </div>
 
     <!-- 4. 연락처 -->
     <div class="field" data-field="phone">
       <label class="field-label" for="phone">4. 연락상담 가능한 연락처를 기입해주세요<span class="required">*</span></label>
-      <input type="tel" id="phone" name="phone" placeholder="예: 010-1234-5678" required>
+      <input type="tel" id="phone" name="phone" placeholder="예: 010-1234-5678" maxlength="30" required>
       <p class="error-text">연락처를 입력해주세요.</p>
     </div>
 
@@ -440,7 +455,7 @@
         <input type="text" id="address-base" name="addressBase" placeholder="기본주소" readonly required>
       </div>
       <div class="address-row">
-        <input type="text" id="address-detail" name="addressDetail" placeholder="아파트/매장 이름을 남겨주세요">
+        <input type="text" id="address-detail" name="addressDetail" placeholder="아파트/매장 이름을 남겨주세요" maxlength="100">
       </div>
       <p class="error-text">주소 검색을 통해 주소를 입력해주세요.</p>
     </div>
@@ -503,7 +518,7 @@
     <!-- 10. 공간 묘사 (9, 9-1 노출 여부에 따라 번호가 9로 당겨질 수 있음) -->
     <div class="field" data-field="description">
       <label class="field-label" for="description"><span class="q-num" id="q-num-description">11.</span> 원하는 공간의 분위기를 편하게 묘사해주세요</label>
-      <textarea id="description" name="description"></textarea>
+      <textarea id="description" name="description" maxlength="2000"></textarea>
     </div>
 
     <!-- 11. 유입 경로 -->
@@ -522,7 +537,7 @@
     <!-- 12. 통화 가능 시간대 -->
     <div class="field" data-field="callTime">
       <label class="field-label" for="callTime"><span class="q-num" id="q-num-callTime">13.</span> 통화 가능한 시간대를 알려주세요<span class="required">*</span></label>
-      <input type="text" id="callTime" name="callTime" placeholder="예: 평일 오후 2시~6시" required>
+      <input type="text" id="callTime" name="callTime" placeholder="예: 평일 오후 2시~6시" maxlength="100" required>
       <p class="error-text">통화 가능한 시간대를 입력해주세요.</p>
     </div>
 
@@ -564,6 +579,10 @@
 <script>
 (function () {
   var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwcL72qeryCQyyChqU-Pmro11x8_cPXzBMSV59yRpldoblUEXfmuf7QY906aTHU8zsF/exec';
+
+  // 폼이 로드된 시각. 봇은 대개 로드 직후 즉시 제출하므로, 서버(Code.gs)에서
+  // 이 시각 대비 너무 빠른 제출을 걸러내는 데 사용한다.
+  var pageLoadedAt = Date.now();
 
   var form = document.getElementById('inquiry-form');
   var submitBtn = document.getElementById('submit-btn');
@@ -705,6 +724,8 @@
     );
 
     return {
+      honeypot: document.getElementById('website').value,
+      loadedAt: pageLoadedAt,
       submittedAt: new Date().toISOString(),
       service: service ? service.value : '',
       name: document.getElementById('name').value.trim(),

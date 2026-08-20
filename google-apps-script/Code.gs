@@ -9,23 +9,73 @@ var HEADERS = [
   '유입경로', '통화가능시간대', '개인정보동의'
 ];
 
-function doPost(e) {
-  var sheet = getOrCreateSheet_();
-  var data = JSON.parse(e.postData.contents);
+// HEADERS(접수일시 제외)와 같은 순서로, data 객체에서 읽어와 시트 행을 구성할 필드.
+// 필드별 최대 길이도 함께 정의(구글 시트 셀당 5만자 제한을 넘기지 않도록, 그리고
+// 스팸성 대용량 페이로드로 시트가 불필요하게 커지는 것을 막기 위한 상한).
+var ROW_FIELDS = [
+  { key: 'service', max: 50 }, { key: 'name', max: 50 },
+  { key: 'email', max: 100 }, { key: 'phone', max: 30 },
+  { key: 'zonecode', max: 20 }, { key: 'addressBase', max: 200 },
+  { key: 'addressDetail', max: 100 }, { key: 'area', max: 20 },
+  { key: 'moveInDate', max: 50 }, { key: 'budget', max: 20 },
+  { key: 'constructionStart', max: 50 }, { key: 'constructionParts', max: 300 },
+  { key: 'description', max: 2000 }, { key: 'referral', max: 50 },
+  { key: 'callTime', max: 100 }, { key: 'consent', max: 10 }
+];
 
-  var row = [
-    formatTimestamp_(data.submittedAt),
-    data.service, data.name, data.email, data.phone,
-    data.zonecode, data.addressBase, data.addressDetail,
-    data.area, data.moveInDate, data.budget,
-    data.constructionStart, data.constructionParts, data.description,
-    data.referral, data.callTime, data.consent
-  ].map(sanitizeForSheet_);
+// 사람은 폼을 최소 이 정도 시간은 들여서 채운다고 가정하고, 그보다 빨리
+// 들어오는 제출은 자동화된 스팸/봇으로 간주해 조용히 무시한다.
+var MIN_FILL_TIME_MS = 3000;
+
+function doPost(e) {
+  var data;
+  try {
+    data = JSON.parse(e.postData.contents);
+  } catch (err) {
+    return jsonResponse_({ result: 'error', message: 'invalid payload' });
+  }
+
+  // 허니팟: 화면에는 보이지 않아 실제 사용자는 채울 수 없는 필드.
+  // 값이 채워져 있으면 자동화된 제출로 보고, 정상 처리된 것처럼 응답만 하고 무시한다.
+  if (data.honeypot) {
+    return jsonResponse_({ result: 'success' });
+  }
+
+  // loadedAt(폼이 로드된 시각) 대비 제출까지 걸린 시간이 너무 짧으면 봇으로 간주.
+  if (data.loadedAt && (Date.now() - Number(data.loadedAt)) < MIN_FILL_TIME_MS) {
+    return jsonResponse_({ result: 'success' });
+  }
+
+  if (!isValidSubmission_(data)) {
+    return jsonResponse_({ result: 'error', message: 'missing required fields' });
+  }
+
+  var sheet = getOrCreateSheet_();
+  var row = [formatTimestamp_(data.submittedAt)].concat(
+    ROW_FIELDS.map(function (field) {
+      return sanitizeForSheet_(truncate_(data[field.key], field.max));
+    })
+  );
 
   sheet.appendRow(row);
 
+  return jsonResponse_({ result: 'success' });
+}
+
+// 실제 상담에 필요한 최소 필수값만 서버에서도 다시 검증한다.
+// (클라이언트 검증은 폼을 거치지 않은 직접 POST 요청에는 적용되지 않으므로)
+function isValidSubmission_(data) {
+  return !!(data.service && data.name && data.email && data.phone && data.addressBase && data.consent === 'Y');
+}
+
+function truncate_(value, max) {
+  var str = (value === undefined || value === null) ? '' : String(value);
+  return max ? str.slice(0, max) : str;
+}
+
+function jsonResponse_(obj) {
   return ContentService
-    .createTextOutput(JSON.stringify({ result: 'success' }))
+    .createTextOutput(JSON.stringify(obj))
     .setMimeType(ContentService.MimeType.JSON);
 }
 
