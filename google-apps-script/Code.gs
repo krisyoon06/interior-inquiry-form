@@ -23,6 +23,10 @@ var ROW_FIELDS = [
   { key: 'callTime', max: 100 }, { key: 'consent', max: 10 }
 ];
 
+// 순수 숫자로만 이루어지면 구글 시트가 자동으로 "숫자"로 인식해 앞자리 0을
+// 지워버리는 필드(연락처, 우편번호 등). 내용과 무관하게 항상 텍스트로 저장한다.
+var FORCE_TEXT_FIELDS = ['phone', 'zonecode'];
+
 // 사람은 폼을 최소 이 정도 시간은 들여서 채운다고 가정하고, 그보다 빨리
 // 들어오는 제출은 자동화된 스팸/봇으로 간주해 조용히 무시한다.
 var MIN_FILL_TIME_MS = 3000;
@@ -53,7 +57,10 @@ function doPost(e) {
   var sheet = getOrCreateSheet_();
   var row = [formatTimestamp_(data.submittedAt)].concat(
     ROW_FIELDS.map(function (field) {
-      return sanitizeForSheet_(truncate_(data[field.key], field.max));
+      var str = truncate_(data[field.key], field.max);
+      return FORCE_TEXT_FIELDS.indexOf(field.key) !== -1
+        ? forceText_(str)
+        : sanitizeForSheet_(str);
     })
   );
 
@@ -91,6 +98,13 @@ function sanitizeForSheet_(value) {
     return "'" + str;
   }
   return str;
+}
+
+// 앞에 항상 어퍼스트로피를 붙여 구글 시트가 숫자/날짜/수식 등으로 자동 해석하지
+// 못하게 하고 무조건 텍스트로 저장되도록 강제한다(FORCE_TEXT_FIELDS 전용).
+function forceText_(value) {
+  var str = (value === undefined || value === null) ? '' : String(value);
+  return str.length > 0 ? "'" + str : str;
 }
 
 function getOrCreateSheet_() {
