@@ -53,6 +53,14 @@
     line-height: 1.6;
   }
 
+  header.page-header p.lead {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    margin: 0 0 6px;
+    line-height: 1.6;
+  }
+
   form {
     background: var(--card-bg);
     border-radius: var(--radius);
@@ -380,7 +388,8 @@
 <body>
 <div class="wrap">
   <header class="page-header">
-    <h1>홈/상업공간 인테리어·스타일링 상담 문의</h1>
+    <h1>LLL SPACE 홈/상업공간 인테리어·스타일링 상담 문의</h1>
+    <p class="lead">상세한 내용을 남겨주시면, 고객님께 꼭 맞는 공간을 제안드리는 데 도움이 됩니다. 지금 3분이면 됩니다.</p>
     <p>아래 항목을 남겨주시면 담당자가 확인 후 순차적으로 연락드립니다.</p>
   </header>
 
@@ -422,7 +431,7 @@
     <!-- 5. 주소 -->
     <div class="field" data-field="address">
       <label class="field-label">5. 의뢰한 공간 주소를 남겨주세요<span class="required">*</span></label>
-      <p class="field-hint">추가 주소 (아파트명, 상호명) 까지 적어주시면 빠르고 상세한 상담이 가능합니다.</p>
+      <p class="field-hint">추가 주소 (아파트 이름, 매장 이름) 까지 적어주시면 빠르고 상세한 상담이 가능합니다.</p>
       <div class="address-row">
         <input type="text" id="zonecode" name="zonecode" placeholder="우편번호" readonly>
         <button type="button" class="btn-secondary" id="btn-address-search">주소 검색</button>
@@ -431,7 +440,7 @@
         <input type="text" id="address-base" name="addressBase" placeholder="기본주소" readonly required>
       </div>
       <div class="address-row">
-        <input type="text" id="address-detail" name="addressDetail" placeholder="아파트/가게 이름을 남겨주세요">
+        <input type="text" id="address-detail" name="addressDetail" placeholder="아파트/매장 이름을 남겨주세요">
       </div>
       <p class="error-text">주소 검색을 통해 주소를 입력해주세요.</p>
     </div>
@@ -446,19 +455,9 @@
       <p class="error-text">면적을 숫자로 입력해주세요.</p>
     </div>
 
-    <!-- 7. 구성원 -->
-    <div class="field" data-field="members">
-      <label class="field-label" for="members">7. 의뢰하시는 공간을 사용하는 구성원이 어떻게 되나요?</label>
-      <div class="unit-input">
-        <input type="number" id="members" name="members" min="1" step="1">
-        <span class="unit">명</span>
-      </div>
-      <p class="error-text">구성원 수를 숫자로 입력해주세요.</p>
-    </div>
-
-    <!-- 8. 입주/오픈 예정일 -->
+    <!-- 7. 입주/오픈 예정일 -->
     <div class="field" data-field="moveInDate">
-      <label class="field-label" for="moveInDate">8. 입주/오픈 예정일이 어떻게 되시나요?<span class="required">*</span></label>
+      <label class="field-label" for="moveInDate">7. 입주/오픈 예정일이 어떻게 되시나요?<span class="required">*</span></label>
       <div class="move-in-row">
         <input type="date" id="moveInDate" name="moveInDate" required>
         <label class="checkbox-inline"><input type="checkbox" id="moveInNow" name="moveInNow"> 현재 입주중</label>
@@ -466,9 +465,9 @@
       <p class="error-text">입주/오픈 예정일을 선택하거나 "현재 입주중"을 체크해주세요.</p>
     </div>
 
-    <!-- 9. 예산 -->
+    <!-- 8. 예산 -->
     <div class="field" data-field="budget">
-      <label class="field-label" for="budget">9. 고려하시는 예산은 어느정도 이신가요?<span class="required">*</span></label>
+      <label class="field-label" for="budget">8. 고려하시는 예산은 어느정도 이신가요?<span class="required">*</span></label>
       <p class="field-hint">스타일링의 경우, 가구, 소품 구매 비용 등을 말씀해주세요</p>
       <div class="unit-input">
         <input type="number" id="budget" name="budget" min="0" step="1" required>
@@ -477,16 +476,16 @@
       <p class="error-text">예산을 숫자로 입력해주세요.</p>
     </div>
 
-    <!-- 조건부: 10, 10-1 (홈인테리어 및 시공 / 상업공간 인테리어 및 시공 선택 시에만 노출) -->
+    <!-- 조건부: 9, 9-1 (홈인테리어 및 시공 / 상업공간 인테리어 및 시공 선택 시에만 노출) -->
     <div class="conditional-block" id="construction-block" hidden>
       <div class="field" data-field="constructionStart">
-        <label class="field-label" for="constructionStart">10. 공사는 언제부터 시작 가능한가요?<span class="required">*</span></label>
+        <label class="field-label" for="constructionStart">9. 공사는 언제부터 시작 가능한가요?<span class="required">*</span></label>
         <input type="date" id="constructionStart" name="constructionStart">
         <p class="error-text">공사 시작 가능일을 선택해주세요.</p>
       </div>
 
       <div class="field" data-field="constructionParts">
-        <label class="field-label">10-1. 시공이 필요한 부분을 체크해주세요</label>
+        <label class="field-label">9-1. 시공이 필요한 부분을 체크해주세요</label>
         <div class="choice-group">
           <label><input type="checkbox" name="constructionParts" value="도배"> 도배</label>
           <label><input type="checkbox" name="constructionParts" value="바닥"> 바닥</label>
@@ -501,13 +500,13 @@
       </div>
     </div>
 
-    <!-- 11. 공간 묘사 (10, 10-1 노출 여부에 따라 번호가 10으로 당겨질 수 있음) -->
+    <!-- 10. 공간 묘사 (9, 9-1 노출 여부에 따라 번호가 9로 당겨질 수 있음) -->
     <div class="field" data-field="description">
-      <label class="field-label" for="description"><span class="q-num" id="q-num-description">11.</span> 원하는 공간의 모습을 편하게 묘사해주세요</label>
+      <label class="field-label" for="description"><span class="q-num" id="q-num-description">11.</span> 원하는 공간의 분위기를 편하게 묘사해주세요</label>
       <textarea id="description" name="description"></textarea>
     </div>
 
-    <!-- 12. 유입 경로 -->
+    <!-- 11. 유입 경로 -->
     <div class="field" data-field="referral">
       <label class="field-label"><span class="q-num" id="q-num-referral">12.</span> 알게된 경로를 말씀해주세요<span class="required">*</span></label>
       <div class="choice-group" data-required-group="referral">
@@ -520,7 +519,7 @@
       <p class="error-text">알게된 경로를 선택해주세요.</p>
     </div>
 
-    <!-- 13. 통화 가능 시간대 -->
+    <!-- 12. 통화 가능 시간대 -->
     <div class="field" data-field="callTime">
       <label class="field-label" for="callTime"><span class="q-num" id="q-num-callTime">13.</span> 통화 가능한 시간대를 알려주세요<span class="required">*</span></label>
       <input type="text" id="callTime" name="callTime" placeholder="예: 평일 오후 2시~6시" required>
@@ -533,7 +532,7 @@
       <div class="consent-box">
         <details>
           <summary>개인정보 수집 및 이용에 관한 안내 전문 보기</summary>
-          <p class="consent-detail">1. 수집 항목: 성함, 이메일 주소, 연락처, 의뢰 공간 주소, 상담 내용(면적, 구성원 수, 입주/오픈 예정일, 예산, 공사 관련 정보, 공간 묘사 등)
+          <p class="consent-detail">1. 수집 항목: 성함, 이메일 주소, 연락처, 의뢰 공간 주소, 상담 내용(면적, 입주/오픈 예정일, 예산, 공사 관련 정보, 공간 묘사 등)
 2. 수집 목적: 인테리어·스타일링 상담 신청 접수 및 상담·견적 안내, 계약 이행을 위한 연락
 3. 보유 및 이용 기간: 수집일로부터 상담 종료 후 1년까지 보관하며, 이후 지체 없이 파기합니다. (단, 관계 법령에 따라 보존이 필요한 경우 해당 기간 동안 보관)
 4. 동의를 거부할 권리 및 불이익: 귀하는 개인정보 수집·이용에 동의하지 않을 권리가 있습니다. 다만 동의하지 않으실 경우 상담 신청 및 진행이 제한될 수 있습니다.</p>
@@ -576,14 +575,14 @@
   var constructionBlock = document.getElementById('construction-block');
   var constructionStartInput = document.getElementById('constructionStart');
 
-  // 10, 10-1번이 숨겨졌을 때 이후 문항 번호가 "9 -> 11"로 건너뛰어 보이지 않도록,
-  // 11~13번 문항 번호를 노출 상태에 맞춰 10~12로 당겨서 다시 매긴다.
+  // 9, 9-1번이 숨겨졌을 때 이후 문항 번호가 "8 -> 10"으로 건너뛰어 보이지 않도록,
+  // 10~12번 문항 번호를 노출 상태에 맞춰 9~11로 당겨서 다시 매긴다.
   var qNumDescription = document.getElementById('q-num-description');
   var qNumReferral = document.getElementById('q-num-referral');
   var qNumCallTime = document.getElementById('q-num-callTime');
 
   function updateQuestionNumbers() {
-    var base = constructionBlock.hidden ? 10 : 11;
+    var base = constructionBlock.hidden ? 9 : 10;
     qNumDescription.textContent = base + '.';
     qNumReferral.textContent = (base + 1) + '.';
     qNumCallTime.textContent = (base + 2) + '.';
@@ -685,7 +684,6 @@
     check('phone', document.getElementById('phone').value.replace(/\D/g, '').length >= 7);
     check('address', document.getElementById('address-base').value.trim().length > 0);
     check('area', document.getElementById('area').value !== '' && Number(document.getElementById('area').value) > 0);
-    check('members', document.getElementById('members').value === '' || Number(document.getElementById('members').value) > 0);
     check('moveInDate', moveInNow.checked || moveInDate.value !== '');
     check('budget', document.getElementById('budget').value !== '' && Number(document.getElementById('budget').value) >= 0);
 
@@ -718,7 +716,6 @@
       addressBase: document.getElementById('address-base').value,
       addressDetail: document.getElementById('address-detail').value.trim(),
       area: document.getElementById('area').value,
-      members: document.getElementById('members').value,
       moveInDate: moveInNow.checked ? '현재 입주중' : moveInDate.value,
       budget: document.getElementById('budget').value,
       constructionStart: constructionBlock.hidden ? '' : constructionStartInput.value,
