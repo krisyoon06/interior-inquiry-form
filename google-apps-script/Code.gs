@@ -158,9 +158,17 @@ function sendSlackMessage_(text) {
     throw new Error('스크립트 속성에 SLACK_WEBHOOK_URL이 설정되지 않았습니다.');
   }
 
-  UrlFetchApp.fetch(webhookUrl, {
+  // muteHttpExceptions로 Slack이 에러를 반환해도 예외 대신 응답을 그대로 받아,
+  // 실패 원인(상태 코드/응답 본문)을 실행 로그에서 확인할 수 있도록 한다.
+  var response = UrlFetchApp.fetch(webhookUrl, {
     method: 'post',
     contentType: 'application/json',
-    payload: JSON.stringify({ text: text })
+    payload: JSON.stringify({ text: text }),
+    muteHttpExceptions: true
   });
+
+  var code = response.getResponseCode();
+  if (code !== 200) {
+    throw new Error('Slack 응답 코드 ' + code + ': ' + response.getContentText());
+  }
 }
