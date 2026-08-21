@@ -21,12 +21,14 @@
 ## 구성 파일
 
 - `inquiry.html` — 문의 폼 페이지 (제출 시 Google Apps Script로 POST)
-- `thankyou.html` — 제출 성공 후 리다이렉트되는 완료 안내 페이지. 제목은 "감사합니다. / 문의가 접수되었어요." 2줄 구성(`<br>`). 하단 버튼은 원래 "문의 폼으로 돌아가기" 링크였으나, "접수 이후 단계 알아보기"라는 별도 안내 페이지를 만들 예정이라 텍스트만 바꾸고 링크는 임시로 해제(`<span>`)해둔 상태 — 해당 페이지 완성되면 다시 `<a href="...">`로 교체할 것(코드에 TODO 주석 있음)
+- `thankyou.html` — 제출 성공 후 리다이렉트되는 완료 안내 페이지. 제목은 "감사합니다. / 문의가 접수되었어요." 2줄 구성(`<br>`). 하단 버튼 "접수 이후 단계 알아보기"는 `next-steps.html`로 연결됨
+- `next-steps.html` — 접수 이후 진행 단계(STEP 1~4: 이야기 나누기 → 현장 방문·실측 → 견적 안내 → 계약 및 시작) 안내 페이지. `thankyou.html`에서 링크됨. 기존 페이지와 동일한 색상/카드 스타일을 공유하는 세로 타임라인 UI. 하단 "카카오톡 채널 문의하기" 버튼은 `http://pf.kakao.com/_ePUxcK/chat`로 새 탭 연결(단순 링크 방식 — Kakao JS SDK는 로그인·도메인 등록 등 부가 요건이 있어 이 정적 사이트엔 과함, 상세 근거는 대화 기록 참고)
 - `index.html` — GitHub Pages 루트 접속 시 `inquiry.html`로 리다이렉트하는 용도
 - `.nojekyll` — GitHub Pages가 Jekyll로 처리하지 않고 정적 파일 그대로 서빙하도록 하는 빈 파일
 - `google-apps-script/Code.gs` — 제출 데이터를 Google Sheets에 append하는 웹훅 스크립트
 - `google-apps-script/README.md` — Sheets + Apps Script 배포 절차
 - `SNS 마케팅관리_new.pdf` — 원본 요건 명세. 내부 기획 문서라 저장소 public 전환 시 제거함. 로컬 `~/Documents/interior-inquiry-form-private/`에 보관 중.
+- `requirement.png` — `next-steps.html`의 4단계 안내 문구 원본 캡처. 마찬가지로 내부 문서라 저장소엔 포함하지 않고 `~/Documents/interior-inquiry-form-private/`에 보관.
 
 ## 알아둘 것 (구현 중 발견한 이슈)
 
@@ -36,7 +38,7 @@
 - `google-apps-script/Code.gs`는 Google Sheets 포뮬러 인젝션(셀 값이 `=,+,-,@`로 시작하면 수식으로 해석되는 문제) 방어 로직(`sanitizeForSheet_`)을 포함함. 새 필드를 추가할 때도 이 sanitize를 거치도록 유지할 것.
 - 개인정보 수집·이용 동의 문구의 보유기간(초안: 상담 종료 후 1년)은 placeholder이므로 실제 운영 정책에 맞게 조정 필요.
 - iOS Safari 자동 확대 방지를 위해 모든 입력 필드 폰트는 16px 이상 유지.
-- 모든 HTML 페이지(`inquiry.html`, `thankyou.html`, `index.html`) 하단에 `© 2026 LLL SPACE. All rights reserved.` 카피라이트 문구 있음(`.site-footer` 클래스).
+- 모든 HTML 페이지(`inquiry.html`, `thankyou.html`, `index.html`, `next-steps.html`) 하단에 `© 2026 LLL SPACE. All rights reserved.` 카피라이트 문구 있음(`.site-footer` 클래스).
 
 ## 보안 (2026-08-20 점검)
 
@@ -58,7 +60,7 @@
 ## 남은 작업 (TODO)
 
 - [ ] Google Sheets에 남아있는 `[테스트]`/`[테스트-차단되어야함]` 접두 더미 행 정리(수동 삭제)
-- [ ] "접수 이후 단계 알아보기" 안내 페이지 제작 후 `thankyou.html`의 `<span class="btn-home">`을 `<a href="...">`로 교체
+- [x] "접수 이후 단계 알아보기" 안내 페이지 제작 → `next-steps.html`로 완료, `thankyou.html` 링크 연결 완료
 - [ ] reCAPTCHA 등 본격적인 봇 차단 도입 여부 판단(사이트키 발급 필요)
 
 ## 로컬 실행/테스트
