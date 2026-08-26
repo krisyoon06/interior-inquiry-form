@@ -22,7 +22,7 @@
 
 - `inquiry.html` — 문의 폼 페이지 (제출 시 Google Apps Script로 POST)
 - `thankyou.html` — 제출 성공 후 리다이렉트되는 완료 안내 페이지. 제목은 "감사합니다. / 문의가 접수되었어요." 2줄 구성(`<br>`). 하단 버튼 "접수 이후 단계 알아보기"는 `next-steps.html`로 연결됨
-- `next-steps.html` — 접수 이후 진행 단계(STEP 1~4: 이야기 나누기 → 현장 방문·실측 → 견적 안내 → 계약 및 시작) 안내 페이지. `thankyou.html`에서 링크됨. 기존 페이지와 동일한 색상/카드 스타일을 공유하는 세로 타임라인 UI. 하단 "카카오톡 채널 문의하기" 버튼은 `http://pf.kakao.com/_ePUxcK/chat`로 새 탭 연결(단순 링크 방식 — Kakao JS SDK는 로그인·도메인 등록 등 부가 요건이 있어 이 정적 사이트엔 과함, 상세 근거는 대화 기록 참고)
+- `next-steps.html` — 접수 이후 진행 단계(STEP 1~4: 상담진행 → 현장확인(필요시) → 견적 받기 → 계약 진행) 안내 페이지. `thankyou.html`에서 링크됨. 기존 페이지와 동일한 색상/카드 스타일을 공유하는 세로 타임라인 UI. 하단 "카카오톡 채널 문의하기" 버튼은 `http://pf.kakao.com/_ePUxcK/chat`로 새 탭 연결(단순 링크 방식 — Kakao JS SDK는 로그인·도메인 등록 등 부가 요건이 있어 이 정적 사이트엔 과함, 상세 근거는 대화 기록 참고)
 - `index.html` — GitHub Pages 루트 접속 시 `inquiry.html`로 리다이렉트하는 용도
 - `.nojekyll` — GitHub Pages가 Jekyll로 처리하지 않고 정적 파일 그대로 서빙하도록 하는 빈 파일
 - `google-apps-script/Code.gs` — 제출 데이터를 Google Sheets에 append하는 웹훅 스크립트
