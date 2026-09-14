@@ -487,19 +487,17 @@
       <p class="error-text">입주/오픈 예정일을 선택하거나 "현재 입주중"을 체크해주세요.</p>
     </div>
 
-    <!-- 8. 예산 -->
-    <div class="field" data-field="budget">
-      <label class="field-label" for="budget">8. 고려하시는 예산은 어느정도 이신가요?<span class="required">*</span></label>
-      <p class="field-hint">스타일링의 경우, 가구, 소품 구매 비용 등을 말씀해주세요</p>
-      <div class="unit-input">
-        <input type="number" id="budget" name="budget" min="0" step="1" required>
-        <span class="unit">만원</span>
-      </div>
-      <p class="error-text">예산을 숫자로 입력해주세요.</p>
-    </div>
-
-    <!-- 조건부: 9, 9-1 (홈인테리어 및 시공 / 상업공간 인테리어 및 시공 선택 시에만 노출) -->
+    <!-- 조건부: 8, 9, 9-1 (홈인테리어 및 시공 / 상업공간 인테리어 및 시공 선택 시에만 노출) -->
     <div class="conditional-block" id="construction-block" hidden>
+      <div class="field" data-field="budget">
+        <label class="field-label" for="budget">8. 고려하시는 예산은 어느정도 이신가요?<span class="required">*</span></label>
+        <div class="unit-input">
+          <input type="number" id="budget" name="budget" min="0" step="1">
+          <span class="unit">만원</span>
+        </div>
+        <p class="error-text">예산을 숫자로 입력해주세요.</p>
+      </div>
+
       <div class="field" data-field="constructionStart">
         <label class="field-label" for="constructionStart">9. 공사는 언제부터 시작 가능한가요?<span class="required">*</span></label>
         <input type="date" id="constructionStart" name="constructionStart">
@@ -522,7 +520,7 @@
       </div>
     </div>
 
-    <!-- 10. 공간 묘사 (9, 9-1 노출 여부에 따라 번호가 9로 당겨질 수 있음) -->
+    <!-- 공간 묘사 (8, 9, 9-1 블록 노출 여부에 따라 번호가 8 또는 10으로 동적 표시됨) -->
     <div class="field" data-field="description">
       <label class="field-label" for="description"><span class="q-num" id="q-num-description">11.</span> 원하는 공간의 분위기를 편하게 묘사해주세요</label>
       <textarea id="description" name="description" maxlength="2000"></textarea>
@@ -600,15 +598,16 @@
   var CONSTRUCTION_TRIGGER_SERVICES = ['홈인테리어 및 시공', '상업공간 인테리어 및 시공'];
   var constructionBlock = document.getElementById('construction-block');
   var constructionStartInput = document.getElementById('constructionStart');
+  var budgetInput = document.getElementById('budget');
 
-  // 9, 9-1번이 숨겨졌을 때 이후 문항 번호가 "8 -> 10"으로 건너뛰어 보이지 않도록,
-  // 10~12번 문항 번호를 노출 상태에 맞춰 9~11로 당겨서 다시 매긴다.
+  // 8, 9, 9-1번(예산/공사 관련) 블록이 숨겨졌을 때 이후 문항 번호가 "7 -> 10"으로
+  // 건너뛰어 보이지 않도록, 10~12번 문항 번호를 노출 상태에 맞춰 8~10으로 당겨서 다시 매긴다.
   var qNumDescription = document.getElementById('q-num-description');
   var qNumReferral = document.getElementById('q-num-referral');
   var qNumCallTime = document.getElementById('q-num-callTime');
 
   function updateQuestionNumbers() {
-    var base = constructionBlock.hidden ? 9 : 10;
+    var base = constructionBlock.hidden ? 8 : 10;
     qNumDescription.textContent = base + '.';
     qNumReferral.textContent = (base + 1) + '.';
     qNumCallTime.textContent = (base + 2) + '.';
@@ -619,10 +618,13 @@
     var show = checked && CONSTRUCTION_TRIGGER_SERVICES.indexOf(checked.value) !== -1;
     constructionBlock.hidden = !show;
     constructionStartInput.required = show;
+    budgetInput.required = show;
     if (!show) {
       constructionStartInput.value = '';
+      budgetInput.value = '';
       form.querySelectorAll('input[name="constructionParts"]').forEach(function (cb) { cb.checked = false; });
       clearFieldError('constructionStart');
+      clearFieldError('budget');
     }
     updateQuestionNumbers();
   }
@@ -711,9 +713,9 @@
     check('address', document.getElementById('address-base').value.trim().length > 0);
     check('area', document.getElementById('area').value !== '' && Number(document.getElementById('area').value) > 0);
     check('moveInDate', moveInNow.checked || moveInDate.value !== '');
-    check('budget', document.getElementById('budget').value !== '' && Number(document.getElementById('budget').value) >= 0);
 
     if (!constructionBlock.hidden) {
+      check('budget', budgetInput.value !== '' && Number(budgetInput.value) >= 0);
       check('constructionStart', constructionStartInput.value !== '');
     }
 
@@ -745,7 +747,7 @@
       addressDetail: document.getElementById('address-detail').value.trim(),
       area: document.getElementById('area').value,
       moveInDate: moveInNow.checked ? '현재 입주중' : moveInDate.value,
-      budget: document.getElementById('budget').value,
+      budget: constructionBlock.hidden ? '' : budgetInput.value,
       constructionStart: constructionBlock.hidden ? '' : constructionStartInput.value,
       constructionParts: parts.join(', '),
       description: document.getElementById('description').value.trim(),
