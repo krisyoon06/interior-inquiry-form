@@ -607,17 +607,37 @@
   var constructionStartInput = document.getElementById('constructionStart');
   var budgetInput = document.getElementById('budget');
 
-  // 8, 9, 9-1번(예산/공사 관련) 블록이 숨겨졌을 때 이후 문항 번호가 "7 -> 10"으로
-  // 건너뛰어 보이지 않도록, 10~12번 문항 번호를 노출 상태에 맞춰 8~10으로 당겨서 다시 매긴다.
+  // UTM으로 유입 경로를 이미 알 수 있으면 "알게된 경로" 문항을 대체한다.
+  // Code.gs는 그대로 두기로 했으므로, 매핑 없이 utm_source 원본 문자열을 기존
+  // referral 필드에 그대로 실어 보낸다(시트에서의 값 정제는 이후 별도로 처리).
+  // 지인소개는 UTM으로 확인이 불가능해 화이트리스트에서 의도적으로 제외함.
+  var UTM_REFERRAL_SOURCES = ['instagram_bio', 'naver_search', 'naver_blog', 'ad'];
+  var utmSourceParam = new URLSearchParams(location.search).get('utm_source');
+  var utmReferralValue = UTM_REFERRAL_SOURCES.indexOf(utmSourceParam) !== -1 ? utmSourceParam : null;
+
+  var referralField = form.querySelector('[data-field="referral"]');
+  var referralRadios = form.querySelectorAll('input[name="referral"]');
+
+  if (utmReferralValue) {
+    referralField.hidden = true;
+    referralRadios.forEach(function (radio) { radio.required = false; });
+  }
+
+  // 8, 9, 9-1번(예산/공사 관련) 블록과 11번(알게된 경로) 문항이 각각의 조건에 따라
+  // 숨겨질 수 있으므로, 노출된 문항만 기준으로 번호를 순서대로 다시 매긴다.
   var qNumDescription = document.getElementById('q-num-description');
   var qNumReferral = document.getElementById('q-num-referral');
   var qNumCallTime = document.getElementById('q-num-callTime');
 
   function updateQuestionNumbers() {
-    var base = constructionBlock.hidden ? 8 : 10;
-    qNumDescription.textContent = base + '.';
-    qNumReferral.textContent = (base + 1) + '.';
-    qNumCallTime.textContent = (base + 2) + '.';
+    var n = constructionBlock.hidden ? 8 : 10;
+    qNumDescription.textContent = n + '.';
+    n += 1;
+    if (!utmReferralValue) {
+      qNumReferral.textContent = n + '.';
+      n += 1;
+    }
+    qNumCallTime.textContent = n + '.';
   }
 
   function updateConstructionVisibility() {
@@ -726,7 +746,9 @@
       check('constructionStart', constructionStartInput.value !== '');
     }
 
-    check('referral', !!form.querySelector('input[name="referral"]:checked'));
+    if (!utmReferralValue) {
+      check('referral', !!form.querySelector('input[name="referral"]:checked'));
+    }
     check('callTime', document.getElementById('callTime').value.trim().length > 0);
     check('consent', document.getElementById('consent').checked);
 
@@ -758,7 +780,7 @@
       constructionStart: constructionBlock.hidden ? '' : constructionStartInput.value,
       constructionParts: parts.join(', '),
       description: document.getElementById('description').value.trim(),
-      referral: referral ? referral.value : '',
+      referral: utmReferralValue || (referral ? referral.value : ''),
       callTime: document.getElementById('callTime').value.trim(),
       consent: document.getElementById('consent').checked ? 'Y' : 'N'
     };
