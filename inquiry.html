@@ -795,7 +795,7 @@
       body: JSON.stringify(payload)
     })
       .then(function () {
-        window.location.href = 'thankyou.html';
+        window.location.href = 'thankyou.html'+ location.search;
       })
       .catch(function () {
         submitBtn.disabled = false;
