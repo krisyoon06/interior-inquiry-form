@@ -538,7 +538,7 @@
       <label class="field-label"><span class="q-num" id="q-num-referral">12.</span> 알게된 경로를 말씀해주세요<span class="required">*</span></label>
       <div class="choice-group" data-required-group="referral">
         <label><input type="radio" name="referral" value="인스타그램" required> 인스타그램</label>
-        <label><input type="radio" name="referral" value="네이버검색" required> 네이버검색</label>
+        <label><input type="radio" name="referral" value="홈페이지" required> 홈페이지</label>
         <label><input type="radio" name="referral" value="블로그" required> 블로그</label>
         <label><input type="radio" name="referral" value="지인소개" required> 지인소개</label>
         <label><input type="radio" name="referral" value="광고" required> 광고</label>
@@ -611,7 +611,7 @@
   // Code.gs는 그대로 두기로 했으므로, 매핑 없이 utm_source 원본 문자열을 기존
   // referral 필드에 그대로 실어 보낸다(시트에서의 값 정제는 이후 별도로 처리).
   // 지인소개는 UTM으로 확인이 불가능해 화이트리스트에서 의도적으로 제외함.
-  var UTM_REFERRAL_SOURCES = ['instagram_bio', 'naver_search', 'naver_blog', 'ad'];
+  var UTM_REFERRAL_SOURCES = ['naver_blog', 'instagram_bio', 'kakao_ch', 'homepg', 'meta_image', 'meta_video', 'event'];
   var utmSourceParam = new URLSearchParams(location.search).get('utm_source');
   var utmReferralValue = UTM_REFERRAL_SOURCES.indexOf(utmSourceParam) !== -1 ? utmSourceParam : null;
 
