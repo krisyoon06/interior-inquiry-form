@@ -618,8 +618,15 @@
   // referral 필드에 그대로 실어 보낸다(시트에서의 값 정제는 이후 별도로 처리).
   // 지인소개는 UTM으로 확인이 불가능해 화이트리스트에서 의도적으로 제외함.
   var UTM_REFERRAL_SOURCES = ['naver_blog', 'instagram_bio', 'kakao_ch', 'homepg', 'meta_image', 'meta_video', 'event'];
-  var utmSourceParam = new URLSearchParams(location.search).get('utm_source');
+  var urlParams = new URLSearchParams(location.search);
+  var utmSourceParam = urlParams.get('utm_source');
   var utmReferralValue = UTM_REFERRAL_SOURCES.indexOf(utmSourceParam) !== -1 ? utmSourceParam : null;
+
+  // utm_source와 별개로, 있으면 그대로 싣고 없으면 빈 문자열로 보내는 부가 UTM 값.
+  // utm_source만 붙은 링크도 있고 4개 다 붙은 링크도 있어 필수값으로 두지 않는다.
+  var utmMedium = urlParams.get('utm_medium') || '';
+  var utmCampaign = urlParams.get('utm_campaign') || '';
+  var utmContent = urlParams.get('utm_content') || '';
 
   var referralField = form.querySelector('[data-field="referral"]');
   var referralRadios = form.querySelectorAll('input[name="referral"]');
@@ -788,7 +795,10 @@
       description: document.getElementById('description').value.trim(),
       referral: utmReferralValue || (referral ? referral.value : ''),
       callTime: document.getElementById('callTime').value.trim(),
-      consent: document.getElementById('consent').checked ? 'Y' : 'N'
+      consent: document.getElementById('consent').checked ? 'Y' : 'N',
+      utmMedium: utmMedium,
+      utmCampaign: utmCampaign,
+      utmContent: utmContent
     };
   }
 

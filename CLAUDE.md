@@ -43,6 +43,16 @@
 - 아직 실제 마케팅 링크(인스타 bio, 네이버 광고 등)에 `utm_source` 파라미터를 붙여 배포하지 않은 상태(2026-09-16 기준) — 배포 전까지는 라이브 트래픽 동작에 변화 없음
 - 라이브(`inquiry.lllspace.com`)에서 3개 시나리오(유효 UTM/UTM 없음/화이트리스트 밖 값) 실제 제출 테스트 완료, `[테스트] UTM시나리오N-...` 접두 더미 데이터가 시트에 남아있으므로 정리 필요(아래 TODO 참고)
 
+## UTM 부가 파라미터: utm_medium/campaign/content (2026-09-23)
+
+`utm_source`와 별개로 `utm_medium`, `utm_campaign`, `utm_content`도 쿼리 파라미터로 받아 시트에 각각 독립된 컬럼으로 저장한다.
+
+- `inquiry.html`에서 3개 모두 값이 없으면 빈 문자열로 payload에 담아 전송(`utmMedium`/`utmCampaign`/`utmContent`) — **`utm_source`만 붙은 링크와 4개 다 붙은 링크가 둘 다 존재**하므로 세 값 모두 필수 아님, `validate()` 대상도 아님
+- `utm_source`는 기존 화이트리스트/`referral` 대체 로직과 완전히 분리되어 있음 — 이번 변경으로 기존 동작에 영향 없음
+- `Code.gs`의 `HEADERS`/`ROW_FIELDS` 맨 끝에 "유입매체(utm_medium)"/"캠페인(utm_campaign)"/"콘텐츠(utm_content)" 3개 컬럼 추가(기존 컬럼 순서 유지, 과거 행은 해당 칸이 비어있음)
+- **배포 시 수동 작업 필요**: ① 운영 중인 시트의 헤더 행에 위 3개 헤더를 수동으로 추가(`개인정보동의` 뒤) ② Apps Script `배포 > 배포 관리 > 수정 > 새 버전`으로 재배포(단순 저장만으로는 반영 안 됨)
+- 프론트/백엔드 배포 순서는 무관하게 안전함(한쪽만 먼저 올라가도 모르는 필드는 조용히 무시되거나 빈 값 처리됨, 문의 접수 자체는 끊기지 않음)
+
 ## 알아둘 것 (구현 중 발견한 이슈)
 
 - **다음(Daum) 우편번호 API는 `file://`로 직접 열면 동작 안 함.** 반드시 로컬 웹서버(`python3 -m http.server 8765` 등)로 `http://`를 통해 열어야 함. 실제 휴대폰으로 테스트할 땐 `localhost`가 아니라 같은 Wi-Fi의 PC LAN IP(`http://<LAN IP>:8765/inquiry.html`)로 접속해야 함.

@@ -6,7 +6,8 @@ var HEADERS = [
   '우편번호', '기본주소', '상세주소',
   '면적(평)', '입주/오픈예정일', '예산(만원)',
   '공사시작가능일', '시공필요부분', '공간묘사',
-  '유입경로', '통화가능시간대', '개인정보동의'
+  '유입경로', '통화가능시간대', '개인정보동의',
+  '유입매체(utm_medium)', '캠페인(utm_campaign)', '콘텐츠(utm_content)'
 ];
 
 // HEADERS(접수일시 제외)와 같은 순서로, data 객체에서 읽어와 시트 행을 구성할 필드.
@@ -20,7 +21,8 @@ var ROW_FIELDS = [
   { key: 'moveInDate', max: 50 }, { key: 'budget', max: 20 },
   { key: 'constructionStart', max: 50 }, { key: 'constructionParts', max: 300 },
   { key: 'description', max: 2000 }, { key: 'referral', max: 50 },
-  { key: 'callTime', max: 100 }, { key: 'consent', max: 10 }
+  { key: 'callTime', max: 100 }, { key: 'consent', max: 10 },
+  { key: 'utmMedium', max: 100 }, { key: 'utmCampaign', max: 100 }, { key: 'utmContent', max: 100 }
 ];
 
 // 순수 숫자로만 이루어지면 구글 시트가 자동으로 "숫자"로 인식해 앞자리 0을
