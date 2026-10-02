@@ -43,14 +43,13 @@
 - 아직 실제 마케팅 링크(인스타 bio, 네이버 광고 등)에 `utm_source` 파라미터를 붙여 배포하지 않은 상태(2026-09-16 기준) — 배포 전까지는 라이브 트래픽 동작에 변화 없음
 - 라이브(`inquiry.lllspace.com`)에서 3개 시나리오(유효 UTM/UTM 없음/화이트리스트 밖 값) 실제 제출 테스트 완료, `[테스트] UTM시나리오N-...` 접두 더미 데이터가 시트에 남아있으므로 정리 필요(아래 TODO 참고)
 
-## UTM 부가 파라미터: utm_medium/campaign/content (2026-09-23)
+## UTM 부가 파라미터: utm_medium/campaign/content (2026-10-02)
 
-`utm_source`와 별개로 `utm_medium`, `utm_campaign`, `utm_content`도 쿼리 파라미터로 받아 시트에 각각 독립된 컬럼으로 저장한다.
+`utm_source`와 별개로 `utm_medium`, `utm_campaign`, `utm_content`도 쿼리 파라미터로 받아 시트에 각각 독립된 컬럼으로 저장한다. 시트 헤더 수동 추가 + `Code.gs` 재배포 완료, 라이브(`inquiry.lllspace.com`) 3개 시나리오(4개 파라미터 전부/`utm_source`만/UTM 없음) 실제 제출 테스트로 신규 3개 컬럼에 값이 정상 기록되는 것까지 확인 완료.
 
 - `inquiry.html`에서 3개 모두 값이 없으면 빈 문자열로 payload에 담아 전송(`utmMedium`/`utmCampaign`/`utmContent`) — **`utm_source`만 붙은 링크와 4개 다 붙은 링크가 둘 다 존재**하므로 세 값 모두 필수 아님, `validate()` 대상도 아님
 - `utm_source`는 기존 화이트리스트/`referral` 대체 로직과 완전히 분리되어 있음 — 이번 변경으로 기존 동작에 영향 없음
 - `Code.gs`의 `HEADERS`/`ROW_FIELDS` 맨 끝에 "유입매체(utm_medium)"/"캠페인(utm_campaign)"/"콘텐츠(utm_content)" 3개 컬럼 추가(기존 컬럼 순서 유지, 과거 행은 해당 칸이 비어있음)
-- **배포 시 수동 작업 필요**: ① 운영 중인 시트의 헤더 행에 위 3개 헤더를 수동으로 추가(`개인정보동의` 뒤) ② Apps Script `배포 > 배포 관리 > 수정 > 새 버전`으로 재배포(단순 저장만으로는 반영 안 됨)
 - 프론트/백엔드 배포 순서는 무관하게 안전함(한쪽만 먼저 올라가도 모르는 필드는 조용히 무시되거나 빈 값 처리됨, 문의 접수 자체는 끊기지 않음)
 
 ## 알아둘 것 (구현 중 발견한 이슈)
@@ -82,7 +81,7 @@
 
 ## 남은 작업 (TODO)
 
-- [ ] Google Sheets에 남아있는 `[테스트]`/`[테스트-차단되어야함]` 접두 더미 행 정리(수동 삭제) — `[테스트] UTM시나리오1/2/3-...` 3건(2026-09-16 UTM 기능 라이브 테스트), `[테스트] UTM점검-baseline-noUTM/naver_blog/instagram_bio/kakao_ch/homepg/meta_image/meta_video/event` 8건(2026-09-23 화이트리스트 개편 후 라이브 회귀 테스트) 포함
+- [ ] Google Sheets에 남아있는 `[테스트]`/`[테스트-차단되어야함]` 접두 더미 행 정리(수동 삭제) — `[테스트] UTM시나리오1/2/3-...` 3건(2026-09-16 UTM 기능 라이브 테스트), `[테스트] UTM점검-baseline-noUTM/naver_blog/instagram_bio/kakao_ch/homepg/meta_image/meta_video/event` 8건(2026-09-23 화이트리스트 개편 후 라이브 회귀 테스트), `[테스트] UTM4필드검증-full4/sourceOnly/noUTM` 3건(2026-10-02 utm_medium/campaign/content 추가 후 Code.gs 재배포 라이브 검증, 신규 3개 컬럼에 값이 정상적으로 들어가는 것까지 확인 완료) 포함
 - [x] "접수 이후 단계 알아보기" 안내 페이지 제작 → `next-steps.html`로 완료, `thankyou.html` 링크 연결 완료
 - [ ] reCAPTCHA 등 본격적인 봇 차단 도입 여부 판단(사이트키 발급 필요)
 - [ ] UTM 파라미터 붙인 실제 마케팅 링크(인스타 bio, 네이버 광고 등) 배포 — 배포 전까지는 "UTM 유입 경로 자동화" 기능이 라이브 트래픽에 영향 없음
