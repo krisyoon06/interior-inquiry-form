@@ -86,6 +86,7 @@
 - [ ] reCAPTCHA 등 본격적인 봇 차단 도입 여부 판단(사이트키 발급 필요)
 - [ ] UTM 파라미터 붙인 실제 마케팅 링크(인스타 bio, 네이버 광고 등) 배포 — 배포 전까지는 "UTM 유입 경로 자동화" 기능이 라이브 트래픽에 영향 없음
 - [ ] Google Sheets `referral` 컬럼 값 정제(UTM 원본 문자열 ↔ 기존 한글 라벨 혼재 상태를 통일) — `Code.gs`는 그대로 두기로 했으므로 시트 쪽에서 수동/별도 처리
+- [ ] "문의 남기기" 제출 후 레이턴시(2026-10-02 체감 5~10초) 개선 — 원인은 `Code.gs`의 `doPost`가 `sheet.appendRow` 이후 `sendSlackMessage_`(Slack 웹훅, `UrlFetchApp.fetch`)를 동기로 기다렸다가 응답을 반환하는 구조. Slack 호출엔 타임아웃이 걸려있지 않아(Apps Script `UrlFetchApp`는 타임아웃 옵션 자체가 없음) Slack 응답이 느릴수록 그대로 사용자 대기 시간에 누적됨. 해결하려면 Slack 전송을 `doPost`에서 분리해 스프레드시트 "변경 시(On change)" 트리거 등 별도 실행으로 비동기화해야 함(Apps Script는 fire-and-forget을 지원하지 않아 같은 실행 안에서는 분리 불가) — 트리거 추가/유지보수 부담이 있어 보류, 체감상 더 심각해지면 재검토
 
 ## 로컬 실행/테스트
 
